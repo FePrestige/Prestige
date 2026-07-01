@@ -1,0 +1,183 @@
+/* Prestige — shared site script
+   - Injects identical header + footer on every page (single source of truth)
+   - Real logo as the home link; one-row grouped nav with dropdown submenus
+   - Bilingual ES/EN toggle (Spanish source), persisted; mobile nav; auto year; mailto form */
+(function () {
+  "use strict";
+
+  var NAV = [
+    { href: "index.html", es: "Inicio", en: "Home" },
+    { es: "Nosotros", en: "About", children: [
+      { href: "quienes-somos.html", es: "Quiénes Somos", en: "Who We Are" },
+      { href: "pilares.html",       es: "En qué creemos", en: "What We Believe" },
+      { href: "vision-2030.html",   es: "Visión", en: "Vision" },
+      { href: "equipo.html",        es: "Equipo", en: "Team" }
+    ]},
+    { es: "Operación", en: "Operations", children: [
+      { href: "donde-operamos.html", es: "Dónde Operamos", en: "Where We Operate" },
+      { href: "sostenibilidad.html", es: "Sostenibilidad", en: "Sustainability" }
+    ]},
+    { href: "inversionistas.html", es: "Inversionistas", en: "Investors" },
+    { href: "contacto.html",      es: "Contacto", en: "Contact" }
+  ];
+
+  function currentFile() {
+    var p = location.pathname.split("/").pop();
+    return p === "" ? "index.html" : p;
+  }
+  function bi(es, en) { return '<span class="es">' + es + '</span><span class="en">' + en + '</span>'; }
+
+  function renderHeader() {
+    var here = currentFile();
+    var items = NAV.map(function (n) {
+      if (n.children) {
+        var active = n.children.some(function (c) { return c.href === here; });
+        var subs = n.children.map(function (c) {
+          var cur = c.href === here ? ' aria-current="page"' : "";
+          return '<li><a href="' + c.href + '"' + cur + '>' + bi(c.es, c.en) + "</a></li>";
+        }).join("");
+        return '<li class="' + (active ? "current" : "") + '">' +
+                 '<button type="button" class="top" aria-haspopup="true" aria-expanded="false">' +
+                   bi(n.es, n.en) + '<span class="caret">▾</span></button>' +
+                 '<ul class="submenu">' + subs + "</ul></li>";
+      }
+      var cur = n.href === here ? ' aria-current="page"' : "";
+      return '<li class="' + (n.href === here ? "current" : "") + '">' +
+             '<a href="' + n.href + '"' + cur + '>' + bi(n.es, n.en) + "</a></li>";
+    }).join("");
+
+    var html =
+      '<a class="skip" href="#main">Saltar al contenido / Skip to content</a>' +
+      '<header class="site-header"><nav class="nav" aria-label="Principal">' +
+        '<a class="brand" href="index.html" title="Inicio / Home" aria-label="Prestige — Inicio / Home">' +
+          '<img src="assets/img/logo-white.png" alt="Prestige"></a>' +
+        '<button class="nav-toggle" aria-expanded="false" aria-controls="menu" aria-label="Menú">☰</button>' +
+        '<div class="lang-toggle" role="group" aria-label="Language">' +
+          '<button type="button" data-set-lang="es">ES</button>' +
+          '<button type="button" data-set-lang="en">EN</button></div>' +
+        '<ul class="menu" id="menu">' + items + "</ul>" +
+      "</nav></header>";
+
+    var mount = document.getElementById("site-header");
+    if (mount) mount.outerHTML = html;
+  }
+
+  function renderFooter() {
+    var year = new Date().getFullYear();
+    var flat = [];
+    NAV.forEach(function (n) {
+      if (n.children) n.children.forEach(function (c) { flat.push(c); });
+      else flat.push(n);
+    });
+    var navLinks = flat.map(function (n) {
+      return '<li><a href="' + n.href + '">' + bi(n.es, n.en) + "</a></li>";
+    }).join("");
+    var explore = "<div><h4>" + bi("Explorar", "Explore") + "</h4><ul>" + navLinks + "</ul></div>";
+
+    var disclosures = "<div><h4>" + bi("Divulgaciones", "Disclosures") + "</h4><ul>" +
+      '<li><a href="https://www.andgreen.fund/portfolio/" target="_blank" rel="noopener">&amp;Green</a></li>' +
+      '<li><a href="https://siemindustries.com" target="_blank" rel="noopener">Siem Industries</a></li>' +
+      '<li><a href="https://www.linkedin.com/company/prestige-colombia/" target="_blank" rel="noopener">LinkedIn</a></li>' +
+      "</ul></div>";
+
+    var contact = "<div><h4>" + bi("Contacto", "Contact") + "</h4><ul>" +
+      '<li><a href="mailto:info@prestigecol.com">info@prestigecol.com</a></li>' +
+      "<li>Bogotá · Villavicencio</li>" +
+      '<li><a href="contacto.html">' + bi("Escríbanos", "Get in touch") + "</a></li></ul></div>";
+
+    var about = '<div class="footer-brand"><img src="assets/img/logo-white.png" alt="Prestige">' +
+      "<p style='color:#aebfa8;font-size:.86rem;margin:0 0 12px'>" +
+        bi("Negocio de palma de aceite integrado y sostenible en Vichada, Orinoquía colombiana. En operación desde 2003.",
+           "Integrated, sustainable palm oil business in Vichada, in Colombia's Orinoquía region. Operating since 2003.") +
+      "</p><p style='color:#8fa489;font-size:.78rem;margin:0'>Prestige Colombia S.A.S. · Extractora Cimarrón S.A.S.</p></div>";
+
+    var html =
+      '<footer class="site-footer"><div class="wrap">' +
+        '<div class="footer-grid">' + about + explore + disclosures + contact + "</div>" +
+        '<div class="footer-bottom">' +
+          "<span>© " + year + " Prestige Colombia S.A.S. " + bi("Todos los derechos reservados.", "All rights reserved.") + "</span>" +
+          '<span class="footer-legal">' + bi("Sitio informativo. No constituye una oferta de valores ni asesoría de inversión.",
+            "Informational website. Not an offer of securities or investment advice.") + "</span>" +
+        "</div></div></footer>";
+
+    var mount = document.getElementById("site-footer");
+    if (mount) mount.outerHTML = html;
+  }
+
+  function applyLang(lang) {
+    var root = document.documentElement;
+    if (lang === "en") { root.classList.add("lang-en"); root.setAttribute("lang", "en"); }
+    else { root.classList.remove("lang-en"); root.setAttribute("lang", "es"); }
+    document.querySelectorAll("[data-set-lang]").forEach(function (b) {
+      b.classList.toggle("active", b.getAttribute("data-set-lang") === lang);
+    });
+    try { localStorage.setItem("prestige-lang", lang); } catch (e) {}
+  }
+  function initLang() {
+    var saved = "es";
+    try { saved = localStorage.getItem("prestige-lang") || "es"; } catch (e) {}
+    applyLang(saved === "en" ? "en" : "es");
+    document.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-set-lang]");
+      if (b) applyLang(b.getAttribute("data-set-lang"));
+    });
+  }
+
+  function initNavToggle() {
+    var header = document.querySelector(".site-header");
+    if (!header) return;
+    var menu = document.getElementById("menu");
+    var groups = Array.prototype.slice.call(menu.querySelectorAll("li")).filter(function (li) {
+      return li.querySelector(".submenu");
+    });
+    function closeAll(except) {
+      groups.forEach(function (li) { if (li !== except) li.classList.remove("open"); });
+    }
+    // Desktop: hover opens one group and closes any other
+    groups.forEach(function (li) {
+      var btn = li.querySelector(".top");
+      li.addEventListener("mouseenter", function () { if (window.innerWidth > 820) { closeAll(li); li.classList.add("open"); } });
+      li.addEventListener("mouseleave", function () { if (window.innerWidth > 820) li.classList.remove("open"); });
+      // Click works on both desktop and mobile (and for keyboard users)
+      if (btn) btn.addEventListener("click", function (e) {
+        e.preventDefault();
+        var isOpen = li.classList.contains("open");
+        closeAll(li);
+        li.classList.toggle("open", !isOpen);
+      });
+    });
+    // Mobile hamburger
+    document.addEventListener("click", function (e) {
+      var t = e.target.closest(".nav-toggle");
+      if (!t) return;
+      var open = menu.classList.toggle("open");
+      t.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    // Click outside or Escape closes all dropdowns
+    document.addEventListener("click", function (e) {
+      if (!e.target.closest(".menu")) closeAll(null);
+    });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeAll(null); });
+  }
+
+  function initForm() {
+    var form = document.getElementById("contact-form");
+    if (!form) return;
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var en = document.documentElement.classList.contains("lang-en");
+      var get = function (id) { var el = document.getElementById(id); return el ? el.value.trim() : ""; };
+      var name = get("cf-name"), org = get("cf-org"), email = get("cf-email"), msg = get("cf-message");
+      var subject = (en ? "Website enquiry — " : "Consulta sitio web — ") + (org || name || "Prestige");
+      var lines = en ? ["Name: " + name, "Organisation: " + org, "Email: " + email, "", "Message:", msg]
+                     : ["Nombre: " + name, "Organización: " + org, "Correo: " + email, "", "Mensaje:", msg];
+      window.location.href = "mailto:info@prestigecol.com?subject=" + encodeURIComponent(subject) +
+        "&body=" + encodeURIComponent(lines.join("\n"));
+      var ok = document.getElementById("cf-status"); if (ok) ok.style.display = "block";
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    renderHeader(); renderFooter(); initLang(); initNavToggle(); initForm();
+  });
+})();
