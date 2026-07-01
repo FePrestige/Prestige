@@ -1,0 +1,8 @@
+{
+  "name": "prestige-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Prestige Colombia website (beta preview)",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" }
+}
