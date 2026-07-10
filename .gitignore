@@ -1,0 +1,10 @@
+node_modules/
+*.log
+.DS_Store
+Thumbs.db
+# temporary working folders (not part of the site)
+_review/
+assets/certtmp/
+assets/tmp2/
+assets/maptmp/
+assets/arview/
