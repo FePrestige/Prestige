@@ -61,3 +61,10 @@ automatically within a minute.
 - This is a static site; there is no database and nothing to configure.
 - The contact form opens the visitor's email app (mailto) — it does not send
   mail from the server, so nothing extra is needed.
+
+## Forms (contact, investors, careers, PQRS)
+The site's forms use **Netlify Forms** (they have `data-netlify="true"`). If you host
+on **Netlify**, submissions appear in your Netlify dashboard automatically — no email,
+no backend, no config. If you host somewhere else (Cloudflare Pages, Railway, etc.),
+point each form to a free form service instead (e.g. Formspree): set the form's
+`action` to your Formspree endpoint and remove the `data-netlify` attribute.
