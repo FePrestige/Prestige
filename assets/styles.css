@@ -351,7 +351,7 @@ section.block.green .pillar-stats h3 { color:var(--green-dark); }
 .upload-note { font-size:.82rem; color:var(--gray-mid); }
 
 /* client logos: show the real logo if the file exists, else the styled name plate */
-.clients .client .clogo { width:100%; height:58px; object-fit:contain; object-position:center; margin:0 auto; display:block; }
+.clients .client .clogo { width:100%; height:50px; max-width:170px; object-fit:contain; object-position:center; margin:0 auto; display:block; }
 
 /* --- press preview cards --- */
 .press-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:24px; }

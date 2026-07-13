@@ -76,10 +76,9 @@
     }).join("");
     var explore = "<div><h4>" + bi("Explorar", "Explore") + "</h4><ul>" + navLinks + "</ul></div>";
 
-    var disclosures = "<div><h4>" + bi("Divulgaciones", "Disclosures") + "</h4><ul>" +
-      '<li><a href="https://www.andgreen.fund/portfolio/" target="_blank" rel="noopener">&amp;Green</a></li>' +
+    var disclosures = "<div><h4>" + bi("Enlaces", "Links") + "</h4><ul>" +
       '<li><a href="https://siemindustries.com" target="_blank" rel="noopener">Siem Industries</a></li>' +
-      '<li><a href="https://www.linkedin.com/company/prestige-colombia/" target="_blank" rel="noopener">LinkedIn</a></li>' +
+      '<li><a href="https://www.linkedin.com/company/prestige-group-colombia/" target="_blank" rel="noopener">LinkedIn</a></li>' +
       "</ul></div>";
 
     var contact = "<div><h4>" + bi("Contacto", "Contact") + "</h4><ul>" +
